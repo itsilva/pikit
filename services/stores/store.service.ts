@@ -78,3 +78,15 @@ export const update = async (
 
     return stores[id];
 };
+
+
+export const remove = async  (id: number): Promise<null | void> => {
+    const store = await find(id);
+
+    if (!store) {
+        return null
+    };
+
+    delete stores[id];
+};
+

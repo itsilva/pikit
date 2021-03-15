@@ -77,3 +77,14 @@ storesRouter.put("/manage/:id", async(req: Request, res: Response) => {
 })
 
 // DELETE items/:id
+storesRouter.delete("/delete/:id", async(req:Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+      const store = await StoreService.remove(parseInt(id));
+
+      res.status(200).json({"message": "The store was removed from the list."}); 
+  } catch (e) {
+      res.status(500).send(e.message);
+  }
+});
