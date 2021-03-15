@@ -6,6 +6,8 @@ import * as dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import { storesRouter } from "./api/endpoints/stores/stores.routes";
+import { teamsRouter } from "./api/endpoints/teams/teams.routes";
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use("/api/stores", storesRouter);
+app.use("/api/teams", teamsRouter);
 
 /**
  * Server Activation
