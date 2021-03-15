@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import * as TeamService from "../../../services/teams/team.service";
-import { TeamBase, Team } from "../../../models/team/team.interface"
+import { TeamBase, Team } from "../../../models/team/team.interface";
 
 export const teamsRouter = express.Router();
 
-teamsRouter.get("/", async(req: Request, res: Response) => {
+teamsRouter.get("/", async (req: Request, res: Response) => {
     try {
         const teams: Team[] = await TeamService.findAll();
 
@@ -14,7 +14,7 @@ teamsRouter.get("/", async(req: Request, res: Response) => {
     }
 });
 
-teamsRouter.get("/:id", async(req: Request, res: Response) => {
+teamsRouter.get("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
         const team: Team = await TeamService.find(parseInt(id));
@@ -25,28 +25,40 @@ teamsRouter.get("/:id", async(req: Request, res: Response) => {
     }
 });
 
-teamsRouter.post("/create", async(req: Request, res: Response) => {
+teamsRouter.post("/create", async (req: Request, res: Response) => {
     try {
         const team: TeamBase = req.body;
         const newTeam: Team = await TeamService.create(team);
 
-        res.send(201).json(team);
+        res.status(201).json(newTeam);
     } catch (e) {
         res.status(500).send(e.message);
     }
 });
 
-teamsRouter.put("/manage/:id", async(req: Request, res: Response) => {
+teamsRouter.put("/manage/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
-    
+
+  try {
+    const teamDataUpdate: Team = req.body;
+    const team: Team = await TeamService.find(parseInt(id));
+
+    if (team) {
+      const updatedTeam = await TeamService.update(parseInt(id), teamDataUpdate);
+      res.status(200).json(updatedTeam)
+    }
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+});
+
+teamsRouter.delete("/delete/:id", async(req:Request, res: Response) => {
+    const { id } = req.params;
+
     try {
-        const team: Team = await TeamService.find(parseInt(id));
+        const team = await TeamService.remove(parseInt(id));
 
-        if (!team) {
-            return res.status(404).json({"message": "Not found"});
-        }
-
-        res.send(200).json(team);
+        res.status(200).json({"message": "The teams was removed from the list."}); 
     } catch (e) {
         res.status(500).send(e.message);
     }
